@@ -1,0 +1,152 @@
+{
+  "mappings": {
+    "doc": {
+      "dynamic": false,
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "sponsor": {
+          "type": "text",
+          "term_vector": "yes",
+          "analyzer": "coupon_analyzer_basic",
+          "search_analyzer": "coupon_search_analyzer_basic",
+          "boost": 13,
+          "fields": {
+            "ngram": {
+              "type": "text",
+              "term_vector": "yes",
+              "analyzer": "coupon_analyzer_ngram",
+              "search_analyzer": "coupon_analyzer_basic",
+              "boost": 3
+            },
+            "edge_ngram": {
+              "type": "text",
+              "term_vector": "yes",
+              "analyzer": "coupon_analyzer_edge",
+              "search_analyzer": "coupon_analyzer_basic",
+              "boost": 7
+            }
+          }
+        },
+        "title": {
+          "type": "text",
+          "term_vector": "yes",
+          "analyzer": "coupon_analyzer_basic",
+          "search_analyzer": "coupon_search_analyzer_basic",
+          "boost": 11,
+          "fields": {
+            "edge_ngram": {
+              "type": "text",
+              "term_vector": "yes",
+              "analyzer": "coupon_analyzer_edge",
+              "search_analyzer": "coupon_analyzer_basic",
+              "boost": 9
+            }
+          }
+        },
+        "description": {
+          "type": "text",
+          "term_vector": "yes",
+          "analyzer": "coupon_analyzer_basic",
+          "search_analyzer": "coupon_search_analyzer_basic",
+          "boost": 5
+        }
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "search_character": {
+          "type": "pattern_replace",
+          "pattern": "([^A-Za-z0-9\\s]+)",
+          "replacement": ""
+        }
+      },
+      "filter": {
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        },
+        "coupon_stemmer": {
+          "type": "stemmer",
+          "name": "english"
+        },
+        "ngram_filter": {
+          "type": "nGram",
+          "min_gram": 2,
+          "max_gram": 10
+        },
+        "ngram_filter_search": {
+          "type": "nGram",
+          "min_gram": 2,
+          "max_gram": 10
+        },
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10
+        },
+        "edge_ngram_filter_search": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10
+        }
+      },
+      "analyzer": {
+        "coupon_analyzer_basic": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "search_character"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "english_stop"
+          ]
+        },
+        "coupon_search_analyzer_basic": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "search_character"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "coupon_analyzer_ngram": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "search_character"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "coupon_stemmer",
+            "english_stop",
+            "ngram_filter"
+          ]
+        },
+        "coupon_analyzer_edge": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "search_character"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "coupon_stemmer",
+            "english_stop",
+            "edge_ngram_filter"
+          ]
+        }
+      }
+    }
+  }
+}
